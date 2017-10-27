@@ -1,0 +1,72 @@
+[meta title:"Web" description:"Short description of your project" /]
+
+[var name:"state" value:0 /]
+
+[Waypoint onEnterView:`state = 0`]
+[section]
+    [Header
+      title:"Ngorongoro Flood Refugee Plan"
+      subtitle:"Prepared for the United Nations High Commissioner for Refugees"
+      author:"Creative Goodwill Co."
+      authorLink:"http://creativegoodwill.co" /]
+[/section]
+[/Waypoint]
+
+
+
+[section]
+    [Waypoint onEnterView:`state = 0`]
+        On 20 April 2017, heavy rains fell on the northern territory of Tanzania
+    [/Waypoint]
+
+    [Waypoint onEnterView:`state = 1`]
+        [section]
+        Village of Endulen was devastated
+        [/section]
+        [section]
+        Number of displaced peoples
+
+        Number of displaced peoples
+
+        Number of displaced peoples
+
+        Number of displaced peoples
+
+        Number of displaced peoples
+
+        Number of displaced peoples
+
+        Number of displaced peoples
+
+        Number of displaced peoples
+
+        Number of displaced peoples
+
+        Number of displaced peoples
+
+        Number of displaced peoples
+        [/section]
+    [/Waypoint]
+
+    [Waypoint onEnterView:`state = 2`]
+    [section]
+        Relief site
+    [/section]
+    [/Waypoint]
+[/section]
+
+## Introduction
+    * Map of Africa
+### Disaster background
+    * Zoom into map of Tanzania locating endulen
+    * Zoom into Endulen
+        * show rainfall
+        * show show casualties
+        * show number of displaced persons
+### Relief site
+    * draw path to relief site
+#### Sun/Wind/Neighboring bodies of water
+
+[Fixed]
+    [MapComponent state:state/]
+[/Fixed]

@@ -1,0 +1,34 @@
+{
+  "name": "ngorongoro-flood",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "idyll index.idl -n -r --css styles.css --theme github --watch",
+    "build": "idyll index.idl --theme github --css styles.css; cp -r {images,fonts} build/;",
+    "deploy": "npm run build && gh-pages -d ./build"
+  },
+  "babel": {
+    "presets": [
+      [
+        "env",
+        {
+          "modules": false
+        }
+      ]
+    ]
+  },
+  "dependencies": {
+    "babel-preset-env": "^1.6.1",
+    "d3": "^4.0.0",
+    "idyll": "^2.0.0",
+    "idyll-d3-component": "^2.0.0",
+    "mapbox-gl": "^0.40.1",
+    "react": "^16.0.0",
+    "react-map-gl": "^3.1.1",
+    "react-mapbox-gl": "^2.7.0",
+    "react-no-ssr": "^1.1.0"
+  },
+  "devDependencies": {
+    "babel-preset-stage-2": "^6.24.1",
+    "gh-pages": "^0.12.0"
+  }
+}
