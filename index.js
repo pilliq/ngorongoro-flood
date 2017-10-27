@@ -21,6 +21,10 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var RELIEF_COORDS = [33.373521, -3.051178];
+var DISASTER_COORDS = [35.269093699999985, -3.2195669];
+var AFRICA_COORDS = [26.332091, 4.711150];
+
 var MapComponent = function (_Component) {
     _inherits(MapComponent, _Component);
 
@@ -31,17 +35,94 @@ var MapComponent = function (_Component) {
     }
 
     _createClass(MapComponent, [{
-        key: 'onState0',
+        key: 'onMapLoad',
+        value: function onMapLoad() {
+            var map = this.map.getMap();
+            map.addSource('contours', {
+                type: 'vector',
+                url: 'mapbox://mapbox.mapbox-terrain-v2'
+            });
+            map.addLayer({
+                'id': 'contours',
+                'type': 'line',
+                'source': 'contours',
+                'source-layer': 'contour',
+                'layout': {
+                    'visibility': 'none',
+                    'line-join': 'round',
+                    'line-cap': 'round'
+                },
+                'paint': {
+                    'line-color': '#877b59',
+                    'line-width': 1
+                }
+            });
+            map.addLayer({
+                "id": "relief-site",
+                "type": "symbol",
+                "source": {
+                    "type": "geojson",
+                    "data": {
+                        "type": "FeatureCollection",
+                        "features": [{
+                            "type": "Feature",
+                            "geometry": {
+                                "type": "Point",
+                                "coordinates": RELIEF_COORDS
+                            },
+                            "properties": {
+                                "title": "Relief Site",
+                                "icon": "monument"
+                            }
+                        }]
+                    }
+                },
+                "layout": {
+                    "visibility": "none",
+                    "icon-image": "{icon}-15",
+                    "text-field": "{title}",
+                    "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
+                    "text-offset": [0, 0.6],
+                    "text-anchor": "top"
+                }
+            });
+            map.addLayer({
+                "id": "disaster-site",
+                "type": "symbol",
+                "source": {
+                    "type": "geojson",
+                    "data": {
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": DISASTER_COORDS
+                        },
+                        "properties": {
+                            "title": "Disaster Site",
+                            "icon": "harbor"
+                        }
+                    }
+                },
+                "layout": {
+                    "visibility": "none",
+                    "icon-image": "{icon}-15",
+                    "text-field": "{title}",
+                    "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
+                    "text-offset": [0, 0.6],
+                    "text-anchor": "top"
+                }
+            });
+        }
 
         // Africa
+
+    }, {
+        key: 'onState0',
         value: function onState0() {
-            var coords = [26.332091, 4.711150];
-            var opts = {
-                center: coords,
-                zoom: 2.0,
-                speed: 0.8
-            };
-            this.map.getMap().flyTo(_extends({}, opts));
+            this.hideLayer('relief-site');
+            this.hideLayer('disaster-site');
+            this.showLayer('tanzania-country-boundary');
+            this.flyTo({ center: AFRICA_COORDS, zoom: 2.0, speed: 0.8 });
         }
 
         // disaster site
@@ -49,13 +130,10 @@ var MapComponent = function (_Component) {
     }, {
         key: 'onState1',
         value: function onState1() {
-            var coords = [35.269093699999985, -3.2195669];
-            var opts = {
-                center: coords,
-                zoom: 9,
-                speed: 0.8
-            };
-            this.map.getMap().flyTo(_extends({}, opts));
+            this.hideLayer('tanzania-country-boundary');
+            this.hideLayer('relief-site');
+            this.showLayer('disaster-site');
+            this.flyTo({ center: DISASTER_COORDS, zoom: 9, speed: 0.8 });
         }
 
         // relief site
@@ -63,13 +141,25 @@ var MapComponent = function (_Component) {
     }, {
         key: 'onState2',
         value: function onState2() {
-            var coords = [33.373521, -3.051178];
-            var opts = {
-                center: coords,
-                zoom: 9,
-                speed: 0.8
-            };
+            this.hideLayer('tanzania-country-boundary');
+            this.hideLayer('disaster-site');
+            this.showLayer('relief-site');
+            this.flyTo({ center: RELIEF_COORDS, zoom: 9, speed: 0.8 });
+        }
+    }, {
+        key: 'flyTo',
+        value: function flyTo(opts) {
             this.map.getMap().flyTo(_extends({}, opts));
+        }
+    }, {
+        key: 'hideLayer',
+        value: function hideLayer(layer) {
+            this.map.getMap().setLayoutProperty(layer, 'visibility', 'none');
+        }
+    }, {
+        key: 'showLayer',
+        value: function showLayer(layer) {
+            this.map.getMap().setLayoutProperty(layer, 'visibility', 'visible');
         }
     }, {
         key: 'componentWillReceiveProps',
@@ -102,6 +192,7 @@ var MapComponent = function (_Component) {
                 zoom: 2.0,
                 mapStyle: 'mapbox://styles/pquiza/cj959wcp00sz42rqh6bprzt1o',
                 mapboxApiAccessToken: 'pk.eyJ1IjoicHF1aXphIiwiYSI6ImNqNzJ6OHMwMTAzamszM201enR1MmZsYzUifQ.N6yX9qx1CeFGnCl6OicU0g',
+                onLoad: this.onMapLoad.bind(this),
                 onViewportChange: function onViewportChange(viewport) {
                     var width = viewport.width,
                         height = viewport.height,
@@ -52386,7 +52477,7 @@ function createMat4() {
 },{"./autobind":"/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/viewport-mercator-project/dist/autobind.js","./equals":"/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/viewport-mercator-project/dist/equals.js","assert":"/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/assert/assert.js","gl-mat4/invert":"/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/gl-mat4/invert.js","gl-mat4/multiply":"/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/gl-mat4/multiply.js","gl-mat4/scale":"/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/gl-mat4/scale.js","gl-mat4/translate":"/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/gl-mat4/translate.js","gl-vec2/lerp":"/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/gl-vec2/lerp.js","gl-vec4/multiply":"/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/gl-vec4/multiply.js","gl-vec4/transformMat4":"/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/gl-vec4/transformMat4.js"}],"__IDYLL_AST__":[function(require,module,exports){
 "use strict";
 
-module.exports = [["var", [["name", ["value", "state"]], ["value", ["value", 0]]], []], ["Waypoint", [["onEnterView", ["expression", "state = 0"]]], [["section", [], [["Header", [["title", ["value", "Ngorongoro Flood Refugee Plan"]], ["subtitle", ["value", "Prepared for the United Nations High Commissioner for Refugees"]], ["author", ["value", "Creative Goodwill Co."]], ["authorLink", ["value", "http://creativegoodwill.co"]]], []]]]]], ["section", [], [["Waypoint", [["onEnterView", ["expression", "state = 0"]]], ["\n        On 20 April 2017, heavy rains fell on the northern territory of Tanzania\n    "]], ["Waypoint", [["onEnterView", ["expression", "state = 1"]]], [["section", [], ["\n        Village of Endulen was devastated\n        "]], ["section", [], [["p", [], ["\n        Number of displaced peoples"]], ["p", [], ["Number of displaced peoples"]], ["p", [], ["Number of displaced peoples"]], ["p", [], ["Number of displaced peoples"]], ["p", [], ["Number of displaced peoples"]], ["p", [], ["Number of displaced peoples"]], ["p", [], ["Number of displaced peoples"]], ["p", [], ["Number of displaced peoples"]], ["p", [], ["Number of displaced peoples"]], ["p", [], ["Number of displaced peoples"]], ["p", [], ["Number of displaced peoples\n        "]]]]]], ["Waypoint", [["onEnterView", ["expression", "state = 2"]]], [["section", [], ["\n        Relief site\n    "]]]]]], ["h2", [], ["Introduction"]], ["ul", [], [["li", [], ["Map of Africa"]]]], ["h3", [], ["Disaster background"]], ["ul", [], [["li", [], ["Zoom into map of Tanzania locating endulen"]]]], ["ul", [], [["li", [], ["Zoom into Endulen"]]]], ["ul", [], [["li", [], ["show rainfall"]]]], ["ul", [], [["li", [], ["show show casualties"]]]], ["ul", [], [["li", [], ["show number of displaced persons"]]]], ["h3", [], ["Relief site"]], ["ul", [], [["li", [], ["draw path to relief site"]]]], ["h4", [], ["Sun/Wind/Neighboring bodies of water"]], ["Fixed", [], [["MapComponent", [["state", ["variable", "state"]]], []]]]];
+module.exports = [["var", [["name", ["value", "state"]], ["value", ["value", 0]]], []], ["Waypoint", [["onEnterView", ["expression", "state = 0"]]], [["section", [], [["Header", [["title", ["value", "Ngorongoro Flood Refugee Plan"]], ["subtitle", ["value", "Prepared for the United Nations High Commissioner for Refugees"]], ["author", ["value", "Creative Goodwill Co."]], ["authorLink", ["value", "http://creativegoodwill.co"]]], []]]]]], ["section", [], [["Waypoint", [["onEnterView", ["expression", "state = 0"]]], ["\n        On 20 April 2017, heavy rains fell on the northern territory of Tanzania\n    "]], ["Waypoint", [["onEnterView", ["expression", "state = 1"]]], [["p", [], ["\n        Village of Endulen was devastated\n        Number of displaced peoples"]], ["p", [], ["Number of displaced peoples"]], ["p", [], ["Number of displaced peoples"]], ["p", [], ["Number of displaced peoples"]], ["p", [], ["Number of displaced peoples"]], ["p", [], ["Number of displaced peoples"]], ["p", [], ["Number of displaced peoples"]], ["p", [], ["Number of displaced peoples"]], ["p", [], ["Number of displaced peoples"]], ["p", [], ["Number of displaced peoples"]], ["p", [], ["Number of displaced peoples\n    "]]]], ["Waypoint", [["onEnterView", ["expression", "state = 2"]]], [["section", [], ["\n        Relief site\n    "]]]]]], ["h2", [], ["Introduction"]], ["ul", [], [["li", [], ["Map of Africa"]]]], ["h3", [], ["Disaster background"]], ["ul", [], [["li", [], ["Zoom into map of Tanzania locating endulen"]]]], ["ul", [], [["li", [], ["Zoom into Endulen"]]]], ["ul", [], [["li", [], ["show rainfall"]]]], ["ul", [], [["li", [], ["show show casualties"]]]], ["ul", [], [["li", [], ["show number of displaced persons"]]]], ["h3", [], ["Relief site"]], ["ul", [], [["li", [], ["draw path to relief site"]]]], ["h4", [], ["Sun/Wind/Neighboring bodies of water"]], ["Fixed", [], [["MapComponent", [["state", ["variable", "state"]]], []]]]];
 
 },{}],"__IDYLL_COMPONENTS__":[function(require,module,exports){
 'use strict';
