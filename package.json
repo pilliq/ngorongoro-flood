@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "idyll index.idl -n -r --css styles.css --theme github --watch",
-    "build": "idyll index.idl --theme github --css styles.css; cp -r {images,fonts} build/;",
+    "build": "idyll index.idl -n -r --theme github --css styles.css; cp -r {images,fonts} build/;",
     "deploy": "npm run build && gh-pages -d ./build"
   },
   "babel": {
