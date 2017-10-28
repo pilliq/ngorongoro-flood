@@ -828,6 +828,11 @@ hr {
 }
 
 
-
 /* Put your custom styles here */
 
+.visible {
+    visibility: visible;
+}
+.invisible {
+    visibility: none;
+}
