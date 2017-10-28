@@ -341,6 +341,7 @@ var VizComponent = function (_React$Component) {
         key: 'componentWillReceiveProps',
         value: function componentWillReceiveProps(nextProps) {
             if (nextProps.state === 2) {
+                this.clear();
                 this.appendBackdrop(this.floodAccum);
             } else {
                 this.clear();
