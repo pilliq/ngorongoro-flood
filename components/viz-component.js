@@ -18,6 +18,7 @@ class VizComponent extends React.Component {
     }
     componentWillReceiveProps(nextProps) {
         if (nextProps.state === 2) {
+            this.clear();
             this.appendBackdrop(this.floodAccum);
         } else {
             this.clear();
