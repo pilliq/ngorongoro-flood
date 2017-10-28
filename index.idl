@@ -20,37 +20,18 @@
     [/Waypoint]
 
     [Waypoint onEnterView:`state = 1`]
-        [section]
         Village of Endulen was devastated
-        [/section]
-        [section]
-        Number of displaced peoples
-
-        Number of displaced peoples
-
-        Number of displaced peoples
-
-        Number of displaced peoples
-
-        Number of displaced peoples
-
-        Number of displaced peoples
-
-        Number of displaced peoples
-
-        Number of displaced peoples
-
-        Number of displaced peoples
-
-        Number of displaced peoples
-
-        Number of displaced peoples
-        [/section]
+        1,000 people affectedkj
     [/Waypoint]
 
     [Waypoint onEnterView:`state = 2`]
     [section]
-        Relief site
+        For 3 days the village of Endulen was 
+    [/section]
+    [/Waypoint]
+    [Waypoint onEnterView:`state = 3`]
+    [section]
+        We will relocate them to the relief site
     [/section]
     [/Waypoint]
 [/section]
@@ -64,9 +45,17 @@
         * show show casualties
         * show number of displaced persons
 ### Relief site
+    * topography
     * draw path to relief site
 #### Sun/Wind/Neighboring bodies of water
 
+## Shelter design and site layout
+    packing in shipping box
+    assembling
+    individual house layout (make sure you add people)
+    zoom out to entire site layout
+    Show flow of people in village
+
 [Fixed]
-    [MapComponent state:state/]
+    [GraphicComponent state:state/]
 [/Fixed]
