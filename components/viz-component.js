@@ -96,7 +96,7 @@ class VizComponent extends React.Component {
     }
 
     clear() {
-        this.svg.selectAll('*').remove();
+        this.svg.selectAll('*').interrupt().remove();
     }
 
 }
