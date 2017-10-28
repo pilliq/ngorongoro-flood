@@ -390,7 +390,7 @@ var VizComponent = function (_React$Component) {
     }, {
         key: 'clear',
         value: function clear() {
-            this.svg.selectAll('*').remove();
+            this.svg.selectAll('*').interrupt().remove();
         }
     }]);
 
