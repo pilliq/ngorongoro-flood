@@ -457,8 +457,11 @@ var VizComponent = function (_React$Component) {
         value: function siteAnalysis() {
             var svg = this.svg;
             this.drawnElems = {};
+            var pattern = this.svg.append('defs').append('pattern').attr('id', 'diagonal-stripe-2').attr('patternUnits', 'userSpaceOnUse').attr('width', 10).attr('height', 10).append('image').attr('xlink:href', 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxMCcgaGVpZ2h0PScxMCc+CiAgPHJlY3Qgd2lkdGg9JzEwJyBoZWlnaHQ9JzEwJyBmaWxsPSd3aGl0ZScvPgogIDxwYXRoIGQ9J00tMSwxIGwyLC0yCiAgICAgICAgICAgTTAsMTAgbDEwLC0xMAogICAgICAgICAgIE05LDExIGwyLC0yJyBzdHJva2U9J2JsYWNrJyBzdHJva2Utd2lkdGg9JzInLz4KPC9zdmc+').attr('x', 0).attr('y', 0).attr('width', 10).attr('height', 10);
             var outerCircle = this.drawnElems.outerCircle = svg.append('circle').attr('class', 'outer').attr('cx', width / 2).attr('cy', height / 2).attr('r', (height - height * .2) / 2).attr('fill', 'rgba(0,0,0,0)').attr('stroke', 'rgba(0,0,0,0)');
             var innerCircle = this.drawnElems.innerCircle = svg.append('circle').attr('class', 'inner').attr('cx', width / 2).attr('cy', height / 2).attr('r', (height - height * .3) / 2).attr('fill', 'rgba(255,255,255,1)').attr('stroke', 'rgba(0,0,0,0)');
+            var buildings = this.drawnElems.buildings = svg.append('circle').attr('class', 'buildings').attr('cx', width / 2).attr('cy', height / 2).attr('r', height * .3 / 2).attr('fill', 'rgba(255,255,255,0)').attr('stroke', 'rgba(0,0,0,0)');
+            var graze = this.drawnElems.graze = svg.append('circle').attr('class', 'graze').attr('cx', width / 2).attr('cy', height / 2).attr('r', height * .2 / 2).attr('fill', 'rgba(255,255,255,0)').attr('stroke', 'rgba(0,0,0,0)');
             var square = this.drawnElems.square = svg.append('rect').attr('class', 'square').attr('width', 0).attr('height', 10).attr('x', width * .1).attr('y', height * .1).attr('fill', 'rgba(255,255,255,0)').attr('stroke', 'rgba(0,0,0,1)').attr('stroke-width', '1px').attr('stroke-dasharray', '3,3');
             var label = this.drawnElems.label = svg.append('text').attr('class', 'label').attr('x', width / 2).attr('y', height / 2).attr('font-size', 28).attr('font-family', 'Verdana').attr('text-anchor', 'middle').attr('fill', 'rgba(0,0,0,0)').text('10 square meters');
 
@@ -470,7 +473,9 @@ var VizComponent = function (_React$Component) {
             label.transition(t).delay(4000).attr('fill', 'rgba(0,0,0,0)').remove();
             outerCircle.transition(t).delay(5000).duration(800).attr('stroke', 'rgba(0,0,0,1)');
             innerCircle.transition(t).delay(6000).duration(800).attr('stroke', 'rgba(0,0,0,1)');
-            outerCircle.transition(t).delay(7000).duration(800).attr('fill', 'green');
+            outerCircle.transition(t).delay(8000).duration(800).attr('fill', 'green');
+            graze.transition(t).delay(9000).duration(800).attr('fill', 'green').attr('stroke', 'rgba(0,0,0,1)');
+            buildings.transition(t).delay(11000).duration(800).attr('fill', 'url(#diagonal-stripe-2)').attr('stroke', 'rgba(0,0,0,1)');
         }
     }, {
         key: 'removeSiteAnalysis',
@@ -478,6 +483,9 @@ var VizComponent = function (_React$Component) {
             var t = d3.transition().ease(d3.easeLinear).duration(clearTransitionDelay);
             this.drawnElems.square.transition(t).attr('width', 0).attr('height', 0);
             this.drawnElems.label.transition(t).attr('fill', 'rgba(0,0,0,0)');
+            this.drawnElems.innerCircle.transition(t).attr('stroke', 'rgba(0,0,0,0)');
+            this.drawnElems.outerCircle.transition(t).attr('stroke', 'rgba(0,0,0,0)');
+            this.drawnElems.graze.transition(t).attr('fill', 'rgba(255,255,255,0)').attr('stroke', 'rgba(255,255,255,0)');
             t.on('end', cb.bind(this));
         }
     }, {
@@ -79322,7 +79330,7 @@ function extend() {
 },{}],"__IDYLL_AST__":[function(require,module,exports){
 "use strict";
 
-module.exports = [["var", [["name", ["value", "state"]], ["value", ["value", 0]]], []], ["Waypoint", [["onEnterView", ["expression", "state = 0"]]], [["section", [], [["Header", [["title", ["value", "Ngorongoro Flood Refugee Plan"]], ["subtitle", ["value", "Prepared for the United Nations High Commissioner for Refugees"]], ["author", ["value", "Creative Goodwill Co."]], ["authorLink", ["value", "http://creativegoodwill.co"]]], []]]]]], ["Waypoint", [["onEnterView", ["expression", "state = 0"]]], ["\n    On 20 April 2017, heavy rains fell on the northern territory of Tanzania."]], ["Waypoint", [["onEnterView", ["expression", "state = 1"]]], ["\n    Village of Endulen was devastated."]], ["Waypoint", [["onEnterView", ["expression", "state = 2"]]], [["section", [], ["\n        For 3 days the village of Endulen was hit with water which accumulated to 500mm of flood water on April 23.\n    "]]]], ["Waypoint", [["onEnterView", ["expression", "state = 3"]]], [["section", [], ["1,000 people were affected with 500 people needing immediate shelter assistance.\n    "]]]], ["Waypoint", [["onEnterView", ["expression", "state = 4"]]], [["section", [], ["\n        We will relocate them to a relief site outside the Maswa Game Reserve\n    "]]]], ["Waypoint", [["onEnterView", ["expression", "state = 5"]]], [["section", [], ["\n        The site layout\n    "]]]], ["Fixed", [], [["FullScreen", [], [["GraphicComponent", [["state", ["variable", "state"]]], []]]]]]];
+module.exports = [["var", [["name", ["value", "state"]], ["value", ["value", 0]]], []], ["Waypoint", [["onEnterView", ["expression", "state = 0"]]], [["section", [], [["Header", [["title", ["value", "Ngorongoro Flood Refugee Plan"]], ["subtitle", ["value", "Prepared for the United Nations High Commissioner for Refugees"]], ["author", ["value", "Creative Goodwill Co."]], ["authorLink", ["value", "http://creativegoodwill.co"]]], []]]]]], ["Waypoint", [["onEnterView", ["expression", "state = 0"]]], ["\n    On 20 April 2017, heavy rains fell on the northern territory of Tanzania."]], ["Waypoint", [["onEnterView", ["expression", "state = 1"]]], ["\n    Many areas were affected, but the village of Endulen was devastated."]], ["Waypoint", [["onEnterView", ["expression", "state = 2"]]], [["section", [], ["\n        For 3 days Endulen was hit with storm waters which accumulated to 500mm of flood water on April 23.\n    "]]]], ["Waypoint", [["onEnterView", ["expression", "state = 3"]]], [["section", [], ["1,000 people were affected with 500 people needing immediate shelter assistance.\n    "]]]], ["Waypoint", [["onEnterView", ["expression", "state = 4"]]], [["section", [], ["\n        The 500 Maasai in need of shelter will be relocated to a relief site outside the Maswa Game Reserve\n    "]]]], ["Waypoint", [["onEnterView", ["expression", "state = 5"]]], [["section", [], [["p", [], ["\n        The relief site will be composed of 80 shelters with an average of 7 refugees per shelter."]], ["p", [], ["The relief site respects the traditional layout of Masaai villages: it uses a circular pattern for its layout and dome-shaped shelters.\n    "]]]]]], ["Fixed", [], [["FullScreen", [], [["GraphicComponent", [["state", ["variable", "state"]]], []]]]]]];
 
 },{}],"__IDYLL_COMPONENTS__":[function(require,module,exports){
 'use strict';
