@@ -19,12 +19,12 @@
 [/Waypoint]
 
 [Waypoint onEnterView:`state = 1`]
-    Village of Endulen was devastated.
+    Many areas were affected, but the village of Endulen was devastated.
 [/Waypoint]
 
 [Waypoint onEnterView:`state = 2`]
     [section]
-        For 3 days the village of Endulen was hit with water which accumulated to 500mm of flood water on April 23.
+        For 3 days Endulen was hit with storm waters which accumulated to 500mm of flood water on April 23.
     [/section]
 [/Waypoint]
 [Waypoint onEnterView:`state = 3`]
@@ -34,12 +34,14 @@
 [/Waypoint]
 [Waypoint onEnterView:`state = 4`]
     [section]
-        We will relocate them to a relief site outside the Maswa Game Reserve
+        The 500 Maasai in need of shelter will be relocated to a relief site outside the Maswa Game Reserve
     [/section]
 [/Waypoint]
 [Waypoint onEnterView:`state = 5`]
     [section]
-        The site layout
+        The relief site will be composed of 80 shelters with an average of 7 refugees per shelter.
+
+        The relief site respects the traditional layout of Masaai villages: it uses a circular pattern for its layout and dome-shaped shelters.
     [/section]
 [/Waypoint]
 

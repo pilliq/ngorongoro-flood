@@ -178,6 +178,17 @@ class VizComponent extends React.Component {
     siteAnalysis() {
         const svg = this.svg;
         this.drawnElems = {};
+        const pattern = this.svg.append('defs').append('pattern')
+            .attr('id', 'diagonal-stripe-2')
+            .attr('patternUnits', 'userSpaceOnUse')
+            .attr('width', 10)
+            .attr('height', 10)
+          .append('image')
+            .attr('xlink:href', 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxMCcgaGVpZ2h0PScxMCc+CiAgPHJlY3Qgd2lkdGg9JzEwJyBoZWlnaHQ9JzEwJyBmaWxsPSd3aGl0ZScvPgogIDxwYXRoIGQ9J00tMSwxIGwyLC0yCiAgICAgICAgICAgTTAsMTAgbDEwLC0xMAogICAgICAgICAgIE05LDExIGwyLC0yJyBzdHJva2U9J2JsYWNrJyBzdHJva2Utd2lkdGg9JzInLz4KPC9zdmc+')
+            .attr('x', 0)
+            .attr('y', 0)
+            .attr('width', 10)
+            .attr('height', 10);
         const outerCircle = this.drawnElems.outerCircle = svg.append('circle')
             .attr('class', 'outer')
             .attr('cx', width/2)
@@ -191,6 +202,20 @@ class VizComponent extends React.Component {
             .attr('cy', height/2)
             .attr('r', (height - (height * .3))/2)
             .attr('fill', 'rgba(255,255,255,1)')
+            .attr('stroke', 'rgba(0,0,0,0)')
+        const buildings = this.drawnElems.buildings = svg.append('circle')
+            .attr('class', 'buildings')
+            .attr('cx', width/2)
+            .attr('cy', height/2)
+            .attr('r', (height * .3)/2)
+            .attr('fill', 'rgba(255,255,255,0)')
+            .attr('stroke', 'rgba(0,0,0,0)')
+        const graze = this.drawnElems.graze = svg.append('circle')
+            .attr('class', 'graze')
+            .attr('cx', width/2)
+            .attr('cy', height/2)
+            .attr('r', (height * .2)/2)
+            .attr('fill', 'rgba(255,255,255,0)')
             .attr('stroke', 'rgba(0,0,0,0)')
         const square = this.drawnElems.square = svg.append('rect')
             .attr('class', 'square')
@@ -232,8 +257,14 @@ class VizComponent extends React.Component {
             .attr('stroke', 'rgba(0,0,0,1)')
         innerCircle.transition(t).delay(6000).duration(800)
             .attr('stroke', 'rgba(0,0,0,1)')
-        outerCircle.transition(t).delay(7000).duration(800)
+        outerCircle.transition(t).delay(8000).duration(800)
             .attr('fill', 'green')
+        graze.transition(t).delay(9000).duration(800)
+            .attr('fill', 'green')
+            .attr('stroke', 'rgba(0,0,0,1)')
+        buildings.transition(t).delay(11000).duration(800)
+            .attr('fill', 'url(#diagonal-stripe-2)')
+            .attr('stroke', 'rgba(0,0,0,1)')
     }
 
     removeSiteAnalysis(cb) {
@@ -245,6 +276,13 @@ class VizComponent extends React.Component {
             .attr('height', 0);
         this.drawnElems.label.transition(t)
             .attr('fill', 'rgba(0,0,0,0)');
+        this.drawnElems.innerCircle.transition(t)
+            .attr('stroke', 'rgba(0,0,0,0)');
+        this.drawnElems.outerCircle.transition(t)
+            .attr('stroke', 'rgba(0,0,0,0)');
+        this.drawnElems.graze.transition(t)
+            .attr('fill', 'rgba(255,255,255,0)')
+            .attr('stroke', 'rgba(255,255,255,0)');
         t.on('end', cb.bind(this));
     }
 
