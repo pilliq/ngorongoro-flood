@@ -213,8 +213,8 @@ var MapComponent = function (_Component) {
         // relief site
 
     }, {
-        key: 'onState3',
-        value: function onState3() {
+        key: 'onState4',
+        value: function onState4() {
             this.hideLayer('tanzania-country-boundary');
             this.hideCountryLabels();
             this.showLayer('relief-site');
@@ -258,8 +258,8 @@ var MapComponent = function (_Component) {
                     this.onState0();
                 } else if (nextProps.state === 1) {
                     this.onState1();
-                } else if (nextProps.state === 3) {
-                    this.onState3();
+                } else if (nextProps.state === 4) {
+                    this.onState4();
                 }
             }
         }
@@ -315,7 +315,7 @@ var d3 = require('d3');
 
 var width = 600,
     height = 500;
-var backdropDelay = 250;
+var clearTransitionDelay = 250;
 
 var VizComponent = function (_React$Component) {
     _inherits(VizComponent, _React$Component);
@@ -336,39 +336,50 @@ var VizComponent = function (_React$Component) {
         value: function componentDidMount() {
             var svg = this.svg = d3.select('#viz').append('svg');
             svg.attr('width', width).attr('height', height);
+            this.removeElems = null;
+            this.drawnElems = null;
         }
     }, {
         key: 'componentWillReceiveProps',
         value: function componentWillReceiveProps(nextProps) {
+            var _this2 = this;
+
             if (nextProps.state === 2) {
-                this.clear();
-                this.appendBackdrop(this.floodAccum);
+                this.clear(false, function () {
+                    _this2.appendBackdrop(_this2.floodAccum);
+                    _this2.removeElems = _this2.removeFloodAccum;
+                });
+            } else if (nextProps.state === 3) {
+                this.clear(false, function () {
+                    _this2.appendBackdrop(_this2.affectedPeople);
+                    _this2.removeElems = _this2.removeAffectedPeople;
+                });
+            } else if (nextProps.state === 5) {
+                this.clear(false, function () {
+                    _this2.appendBackdrop(_this2.siteAnalysis);
+                    _this2.removeElems = _this2.removeSiteAnalysis;
+                });
             } else {
-                this.clear();
+                this.clear(true, function () {});
             }
-        }
-    }, {
-        key: 'appendBackdrop',
-        value: function appendBackdrop(cb) {
-            var backdrop = this.svg.append('rect').attr('width', '100%').attr('height', '100%').attr('fill', 'rgba(255,255,255,0)');
-            backdrop.transition().ease(d3.easeLinear).duration(backdropDelay).attr('fill', 'rgba(255,255,255,1)').on('end', cb.bind(this));
         }
     }, {
         key: 'floodAccum',
         value: function floodAccum() {
             var svg = this.svg;
-            var accumed = svg.append('rect').attr('width', width).attr('height', 0).attr('x', 0).attr('transform', 'scale(1,-1)translate(0,' + -height + ')').attr('fill', 'rgba(0,0,255,0.5)');
+            this.drawnElems = {};
+            var water = this.drawnElems.water = svg.append('rect').attr('class', 'water').attr('width', width).attr('height', 0).attr('x', 0).attr('transform', 'scale(1,-1)translate(0,' + -height + ')').attr('fill', 'rgba(0,0,255,0.5)');
 
-            var circles = svg.selectAll('circle').data(d3.range(10));
             var diameter = width / 10;
-            var circleEnter = circles.enter().append('circle').attr('r', diameter / 2 + 8) // 8 is just padding to make the waves less sharp
+            var waves = svg.selectAll('circle.wave').data(d3.range(10));
+            var wavesEnter = this.drawnElems.waves = waves.enter().append('circle').attr('class', 'wave').merge(waves).attr('r', diameter / 2 + 8) // 8 is just padding to make the waves less sharp
             .attr('cx', function (d, i) {
                 return i * diameter + diameter / 2;
-            }).attr('cy', height).attr('fill', 'white');
+            }).attr('cy', height).attr('fill', 'rgba(255,255,255,1)');
 
-            var stat = svg.append('text').attr('x', width / 2).attr('y', height / 2).attr('font-size', 52).attr('font-family', 'Verdana').attr('text-anchor', 'middle').attr('font-weight', 'bold').text('000 mm');
+            var stat = this.drawnElems.stat = svg.append('text').attr('x', width / 2).attr('y', height / 2).attr('font-size', 52).attr('font-family', 'Verdana').attr('text-anchor', 'middle').attr('font-weight', 'bold').attr('fill', 'rgba(0,0,0,1)').text('000 mm');
 
-            var label = svg.append('text').attr('x', width / 2).attr('y', height / 2 + 52).attr('font-size', 28).attr('font-family', 'Verdana').attr('text-anchor', 'middle').attr('fill', 'rgba(0,0,0,0)').text('Total accummulated flood water');
+            var label = this.drawnElems.label = svg.append('text').attr('x', width / 2).attr('y', height / 2 + 52).attr('font-size', 28).attr('font-family', 'Verdana').attr('text-anchor', 'middle').attr('fill', 'rgba(0,0,0,0)').text('Total accummulated flood water');
 
             var duration = 2100;
             var waveHeight = height * .87;
@@ -383,15 +394,127 @@ var VizComponent = function (_React$Component) {
             });
 
             var t = d3.transition().ease(d3.easeBackOut).duration(duration);
-            circleEnter.transition(t).attr('cy', height - waveHeight);
-            accumed.transition(t).attr('height', waveHeight).on('end', function () {
+            wavesEnter.transition(t).attr('cy', height - waveHeight);
+            water.transition(t).attr('height', waveHeight).on('end', function () {
                 label.transition().duration(800).attr('fill', 'rgba(0,0,0,1)');
             });
         }
     }, {
+        key: 'removeFloodAccum',
+        value: function removeFloodAccum(cb) {
+            var t = d3.transition().ease(d3.easeLinear).duration(clearTransitionDelay);
+            this.drawnElems.water.transition(t).attr('height', 0).attr('fill', 'rgba(0,0,255,0');
+            this.drawnElems.waves.transition(t).attr('cy', height).attr('fill', 'rgba(255,255,255,0');
+            this.drawnElems.stat.transition(t).attr('fill', 'rgba(0,0,0,0)');
+            this.drawnElems.label.transition(t).attr('fill', 'rgba(0,0,0,0)');
+            t.on('end', cb.bind(this));
+        }
+    }, {
+        key: 'affectedPeople',
+        value: function affectedPeople() {
+            var svg = this.svg;
+            this.drawnElems = {};
+
+            var getX = function getX(i) {
+                return i % 30 * 17;
+            };
+            var getY = function getY(i) {
+                return i % 35 * 17;
+            };
+            var isAffected = function isAffected(i) {
+                var x = getX(i);
+                var y = getY(i);
+                var affected = false;
+                if (x > 100 && x < 400 && y > 100 && y < 400) {
+                    affected = true;
+                }
+                return affected;
+            };
+            var people = svg.selectAll('g.person').data(d3.range(500));
+            var peopleEnter = this.drawnElems.people = people.enter().append('g').attr('class', function (d, i) {
+                return 'person ' + (isAffected(i) ? 'affected' : 'not-affected');
+            }).merge(people).attr('fill', 'white').attr('transform', function (d, i) {
+                return 'translate(' + getX(i) + ',' + getY(i) + ')scale(.3)';
+            });
+
+            peopleEnter.append('path').attr('transform', 'matrix(1.25,0,0,-1.25,359.06468,506.51275)').attr('d', 'M-237.575,383.262c4.162,0,7.538,3.376,7.538,7.539c0,4.166-3.376,7.541-7.538,7.541c-4.166,0-7.539-3.376-7.539-7.541C-245.113,386.638-241.74,383.262-237.575,383.262');
+            peopleEnter.append('path').attr('transform', 'matrix(1.25,0,0,-1.25,367.39906,508.44512)').attr('d', 'M-235.914,382.874c5.333,0,9.702-4.327,9.702-9.657v-23.384c0-1.821-1.433-3.298-3.257-3.298c-1.821,0-3.302,1.478-3.302,3.298v21.084h-1.702v-58.663c0-2.446-1.996-4.425-4.439-4.425c-2.446,0-4.425,1.979-4.425,4.425v34.063h-1.815v-34.063c0-2.446-1.979-4.425-4.421-4.425c-2.443,0-4.425,1.979-4.425,4.425c0,3.614-0.039,58.663-0.039,58.663h-1.68v-21.084c0-1.821-1.478-3.298-3.302-3.298c-1.823,0-3.257,1.478-3.257,3.298v23.384c0,5.33,4.368,9.657,9.705,9.657H-235.914z');
+            var duration = 1000;
+            var t = d3.transition().ease(d3.easeLinear).duration(duration);
+            peopleEnter.transition(t).attr('fill', 'rgba(0,0,0,1)').transition().delay(2500).duration(1000).attr('fill', function (d, i) {
+                return isAffected(i) ? 'rgba(255,0,0,1)' : 'rgba(0,0,0,0)';
+            });
+        }
+    }, {
+        key: 'removeAffectedPeople',
+        value: function removeAffectedPeople(cb) {
+            var t = d3.transition().ease(d3.easeLinear).duration(clearTransitionDelay);
+            this.drawnElems.people.selectAll('g path').transition(t).attr('fill', 'white');
+            t.on('end', cb.bind(this));
+        }
+    }, {
+        key: 'siteAnalysis',
+        value: function siteAnalysis() {
+            var svg = this.svg;
+            this.drawnElems = {};
+            var outerCircle = this.drawnElems.outerCircle = svg.append('circle').attr('class', 'outer').attr('cx', width / 2).attr('cy', height / 2).attr('r', (height - height * .2) / 2).attr('fill', 'rgba(0,0,0,0)').attr('stroke', 'rgba(0,0,0,0)');
+            var innerCircle = this.drawnElems.innerCircle = svg.append('circle').attr('class', 'inner').attr('cx', width / 2).attr('cy', height / 2).attr('r', (height - height * .3) / 2).attr('fill', 'rgba(255,255,255,1)').attr('stroke', 'rgba(0,0,0,0)');
+            var square = this.drawnElems.square = svg.append('rect').attr('class', 'square').attr('width', 0).attr('height', 10).attr('x', width * .1).attr('y', height * .1).attr('fill', 'rgba(255,255,255,0)').attr('stroke', 'rgba(0,0,0,1)').attr('stroke-width', '1px').attr('stroke-dasharray', '3,3');
+            var label = this.drawnElems.label = svg.append('text').attr('class', 'label').attr('x', width / 2).attr('y', height / 2).attr('font-size', 28).attr('font-family', 'Verdana').attr('text-anchor', 'middle').attr('fill', 'rgba(0,0,0,0)').text('10 square meters');
+
+            square.transition().ease(d3.easeLinear).duration(1000).attr('width', width - width * .2).transition().ease(d3.easeLinear).duration(1000).attr('height', height - height * .2);
+            label.transition().ease(d3.easeLinear).delay(2000).duration(800).attr('fill', 'rgba(0,0,0,1)');
+
+            var t = d3.transition().duration(500).ease(d3.easeLinear);
+            square.transition(t).delay(5000).attr('stroke', 'rgba(0,0,0,0)').remove();
+            label.transition(t).delay(4000).attr('fill', 'rgba(0,0,0,0)').remove();
+            outerCircle.transition(t).delay(5000).duration(800).attr('stroke', 'rgba(0,0,0,1)');
+            innerCircle.transition(t).delay(6000).duration(800).attr('stroke', 'rgba(0,0,0,1)');
+            outerCircle.transition(t).delay(7000).duration(800).attr('fill', 'green');
+        }
+    }, {
+        key: 'removeSiteAnalysis',
+        value: function removeSiteAnalysis(cb) {
+            var t = d3.transition().ease(d3.easeLinear).duration(clearTransitionDelay);
+            this.drawnElems.square.transition(t).attr('width', 0).attr('height', 0);
+            this.drawnElems.label.transition(t).attr('fill', 'rgba(0,0,0,0)');
+            t.on('end', cb.bind(this));
+        }
+    }, {
+        key: 'appendBackdrop',
+        value: function appendBackdrop(cb) {
+            var backdrop = this.svg.append('rect').attr('class', 'backdrop').attr('width', '100%').attr('height', '100%').attr('fill', 'rgba(255,255,255,0)');
+            backdrop.transition().ease(d3.easeLinear).duration(clearTransitionDelay).attr('fill', 'rgba(255,255,255,1)').on('end', cb.bind(this));
+        }
+    }, {
+        key: 'unappendBackdrop',
+        value: function unappendBackdrop(cb) {
+            var backdrop = this.svg.select('rect.backdrop');
+            backdrop.transition().ease(d3.easeLinear).duration(clearTransitionDelay).attr('fill', 'rgba(255,255,255,0)').on('end', cb.bind(this)).remove();
+        }
+    }, {
         key: 'clear',
-        value: function clear() {
-            this.svg.selectAll('*').interrupt().remove();
+        value: function clear(removeBackdrop, cb) {
+            var _this3 = this;
+
+            console.log('clearing');
+            var callback = cb.bind(this);
+            if (this.removeElems !== null && this.drawnElems !== null) {
+                this.removeElems(function () {
+                    _this3.drawnElems = null;
+                    _this3.removeElems = null;
+                    if (removeBackdrop) {
+                        _this3.unappendBackdrop(function () {
+                            _this3.svg.selectAll('*').interrupt().remove();
+                            callback();
+                        });
+                    } else {
+                        callback();
+                    }
+                });
+            } else {
+                callback();
+            }
         }
     }]);
 
@@ -29975,7 +30098,76 @@ var Fixed = function (_React$PureComponent) {
 
 exports.default = Fixed;
 
-},{"react":"/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/react/index.js"}],"/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/idyll-components/dist/cjs/header.js":[function(require,module,exports){
+},{"react":"/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/react/index.js"}],"/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/idyll-components/dist/cjs/full-screen.js":[function(require,module,exports){
+'use strict';
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+exports.__esModule = true;
+
+var _extends = Object.assign || function (target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i];for (var key in source) {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
+        target[key] = source[key];
+      }
+    }
+  }return target;
+};
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactDom = require('react-dom');
+
+var _reactDom2 = _interopRequireDefault(_reactDom);
+
+var _screen = require('./utils/screen');
+
+var _screen2 = _interopRequireDefault(_screen);
+
+function _interopRequireDefault(obj) {
+  return obj && obj.__esModule ? obj : { default: obj };
+}
+
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
+function _possibleConstructorReturn(self, call) {
+  if (!self) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }return call && ((typeof call === 'undefined' ? 'undefined' : _typeof(call)) === "object" || typeof call === "function") ? call : self;
+}
+
+function _inherits(subClass, superClass) {
+  if (typeof superClass !== "function" && superClass !== null) {
+    throw new TypeError("Super expression must either be null or a function, not " + (typeof superClass === 'undefined' ? 'undefined' : _typeof(superClass)));
+  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+}
+
+var FullScreen = function (_React$PureComponent) {
+  _inherits(FullScreen, _React$PureComponent);
+
+  function FullScreen(props) {
+    _classCallCheck(this, FullScreen);
+
+    return _possibleConstructorReturn(this, _React$PureComponent.call(this, props));
+  }
+
+  FullScreen.prototype.render = function render() {
+    return _react2.default.createElement(_screen2.default, _extends({ fullBleed: true, align: 'stretch' }, this.props));
+  };
+
+  return FullScreen;
+}(_react2.default.PureComponent);
+
+exports.default = FullScreen;
+
+},{"./utils/screen":"/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/idyll-components/dist/cjs/utils/screen.js","react":"/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/react/index.js","react-dom":"/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/react-dom/index.js"}],"/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/idyll-components/dist/cjs/header.js":[function(require,module,exports){
 'use strict';
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
@@ -79130,7 +79322,7 @@ function extend() {
 },{}],"__IDYLL_AST__":[function(require,module,exports){
 "use strict";
 
-module.exports = [["var", [["name", ["value", "state"]], ["value", ["value", 0]]], []], ["Waypoint", [["onEnterView", ["expression", "state = 0"]]], [["section", [], [["Header", [["title", ["value", "Ngorongoro Flood Refugee Plan"]], ["subtitle", ["value", "Prepared for the United Nations High Commissioner for Refugees"]], ["author", ["value", "Creative Goodwill Co."]], ["authorLink", ["value", "http://creativegoodwill.co"]]], []]]]]], ["section", [], [["Waypoint", [["onEnterView", ["expression", "state = 0"]]], ["\n        On 20 April 2017, heavy rains fell on the northern territory of Tanzania\n    "]], ["Waypoint", [["onEnterView", ["expression", "state = 1"]]], ["\n        Village of Endulen was devastated\n        1,000 people affectedkj\n    "]], ["Waypoint", [["onEnterView", ["expression", "state = 2"]]], [["section", [], ["\n        For 3 days the village of Endulen was \n    "]]]], ["Waypoint", [["onEnterView", ["expression", "state = 3"]]], [["section", [], ["\n        We will relocate them to the relief site\n    "]]]]]], ["h2", [], ["Introduction"]], ["ul", [], [["li", [], ["Map of Africa"]]]], ["h3", [], ["Disaster background"]], ["ul", [], [["li", [], ["Zoom into map of Tanzania locating endulen"]]]], ["ul", [], [["li", [], ["Zoom into Endulen"]]]], ["ul", [], [["li", [], ["show rainfall"]]]], ["ul", [], [["li", [], ["show show casualties"]]]], ["ul", [], [["li", [], ["show number of displaced persons"]]]], ["h3", [], ["Relief site"]], ["ul", [], [["li", [], ["topography"]]]], ["ul", [], [["li", [], ["draw path to relief site"]]]], ["h4", [], ["Sun/Wind/Neighboring bodies of water"]], ["h2", [], ["Shelter design and site layout"]], ["p", [], ["    packing in shipping box\n    assembling\n    individual house layout (make sure you add people)\n    zoom out to entire site layout\n    Show flow of people in village"]], ["Fixed", [], [["GraphicComponent", [["state", ["variable", "state"]]], []]]]];
+module.exports = [["var", [["name", ["value", "state"]], ["value", ["value", 0]]], []], ["Waypoint", [["onEnterView", ["expression", "state = 0"]]], [["section", [], [["Header", [["title", ["value", "Ngorongoro Flood Refugee Plan"]], ["subtitle", ["value", "Prepared for the United Nations High Commissioner for Refugees"]], ["author", ["value", "Creative Goodwill Co."]], ["authorLink", ["value", "http://creativegoodwill.co"]]], []]]]]], ["Waypoint", [["onEnterView", ["expression", "state = 0"]]], ["\n    On 20 April 2017, heavy rains fell on the northern territory of Tanzania."]], ["Waypoint", [["onEnterView", ["expression", "state = 1"]]], ["\n    Village of Endulen was devastated."]], ["Waypoint", [["onEnterView", ["expression", "state = 2"]]], [["section", [], ["\n        For 3 days the village of Endulen was hit with water which accumulated to 500mm of flood water on April 23.\n    "]]]], ["Waypoint", [["onEnterView", ["expression", "state = 3"]]], [["section", [], ["1,000 people were affected with 500 people needing immediate shelter assistance.\n    "]]]], ["Waypoint", [["onEnterView", ["expression", "state = 4"]]], [["section", [], ["\n        We will relocate them to a relief site outside the Maswa Game Reserve\n    "]]]], ["Waypoint", [["onEnterView", ["expression", "state = 5"]]], [["section", [], ["\n        The site layout\n    "]]]], ["Fixed", [], [["FullScreen", [], [["GraphicComponent", [["state", ["variable", "state"]]], []]]]]]];
 
 },{}],"__IDYLL_COMPONENTS__":[function(require,module,exports){
 'use strict';
@@ -79139,10 +79331,11 @@ module.exports = {
 	'waypoint': require('/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/idyll-components/dist/cjs/waypoint.js'),
 	'header': require('/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/idyll-components/dist/cjs/header.js'),
 	'fixed': require('/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/idyll-components/dist/cjs/fixed.js'),
+	'full-screen': require('/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/idyll-components/dist/cjs/full-screen.js'),
 	'graphic-component': require('/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/components/graphic-component.js')
 };
 
-},{"/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/components/graphic-component.js":"/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/components/graphic-component.js","/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/idyll-components/dist/cjs/fixed.js":"/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/idyll-components/dist/cjs/fixed.js","/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/idyll-components/dist/cjs/header.js":"/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/idyll-components/dist/cjs/header.js","/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/idyll-components/dist/cjs/waypoint.js":"/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/idyll-components/dist/cjs/waypoint.js"}],"__IDYLL_DATA__":[function(require,module,exports){
+},{"/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/components/graphic-component.js":"/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/components/graphic-component.js","/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/idyll-components/dist/cjs/fixed.js":"/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/idyll-components/dist/cjs/fixed.js","/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/idyll-components/dist/cjs/full-screen.js":"/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/idyll-components/dist/cjs/full-screen.js","/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/idyll-components/dist/cjs/header.js":"/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/idyll-components/dist/cjs/header.js","/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/idyll-components/dist/cjs/waypoint.js":"/Users/pquiza/Dropbox/unsw/classes/sem2/critical_approaches/a3/web/node_modules/idyll-components/dist/cjs/waypoint.js"}],"__IDYLL_DATA__":[function(require,module,exports){
 "use strict";
 
 module.exports = {};
