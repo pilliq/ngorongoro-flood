@@ -101,7 +101,7 @@ class MapComponent extends Component {
     }
 
     // relief site
-    onState3() {
+    onState4() {
         this.hideLayer('tanzania-country-boundary');
         this.hideCountryLabels();
         this.showLayer('relief-site');
@@ -139,8 +139,8 @@ class MapComponent extends Component {
                 this.onState0();
             } else if (nextProps.state === 1) {
                 this.onState1();
-            } else if (nextProps.state === 3) {
-                this.onState3();
+            } else if (nextProps.state === 4) {
+                this.onState4();
             }
         }
     }

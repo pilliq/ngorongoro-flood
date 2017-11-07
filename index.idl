@@ -14,48 +14,37 @@
 
 
 
-[section]
-    [Waypoint onEnterView:`state = 0`]
-        On 20 April 2017, heavy rains fell on the northern territory of Tanzania
-    [/Waypoint]
+[Waypoint onEnterView:`state = 0`]
+    On 20 April 2017, heavy rains fell on the northern territory of Tanzania.
+[/Waypoint]
 
-    [Waypoint onEnterView:`state = 1`]
-        Village of Endulen was devastated
-        1,000 people affectedkj
-    [/Waypoint]
+[Waypoint onEnterView:`state = 1`]
+    Village of Endulen was devastated.
+[/Waypoint]
 
-    [Waypoint onEnterView:`state = 2`]
+[Waypoint onEnterView:`state = 2`]
     [section]
-        For 3 days the village of Endulen was 
+        For 3 days the village of Endulen was hit with water which accumulated to 500mm of flood water on April 23.
     [/section]
-    [/Waypoint]
-    [Waypoint onEnterView:`state = 3`]
+[/Waypoint]
+[Waypoint onEnterView:`state = 3`]
     [section]
-        We will relocate them to the relief site
+        1,000 people were affected with 500 people needing immediate shelter assistance.
     [/section]
-    [/Waypoint]
-[/section]
-
-## Introduction
-    * Map of Africa
-### Disaster background
-    * Zoom into map of Tanzania locating endulen
-    * Zoom into Endulen
-        * show rainfall
-        * show show casualties
-        * show number of displaced persons
-### Relief site
-    * topography
-    * draw path to relief site
-#### Sun/Wind/Neighboring bodies of water
-
-## Shelter design and site layout
-    packing in shipping box
-    assembling
-    individual house layout (make sure you add people)
-    zoom out to entire site layout
-    Show flow of people in village
+[/Waypoint]
+[Waypoint onEnterView:`state = 4`]
+    [section]
+        We will relocate them to a relief site outside the Maswa Game Reserve
+    [/section]
+[/Waypoint]
+[Waypoint onEnterView:`state = 5`]
+    [section]
+        The site layout
+    [/section]
+[/Waypoint]
 
 [Fixed]
+[FullScreen]
     [GraphicComponent state:state/]
+[/FullScreen]
 [/Fixed]
