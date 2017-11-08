@@ -178,7 +178,19 @@ class VizComponent extends React.Component {
     siteAnalysis() {
         const svg = this.svg;
         this.drawnElems = {};
-        const pattern = this.svg.append('defs').append('pattern')
+        const getX = function(i) {
+            return (i%10) * 17;
+        }
+        const getY = function(i) {
+            return (i%15) * 17;
+        }
+<defs>
+<pattern id="pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+<circle cx="10" cy="10" r="10" stroke="none" fill="#393" />
+</pattern>
+</defs>
+        const defs = this.svg.append('defs')
+        const diagonalPattern = defs.append('pattern')
             .attr('id', 'diagonal-stripe-2')
             .attr('patternUnits', 'userSpaceOnUse')
             .attr('width', 10)
@@ -189,6 +201,22 @@ class VizComponent extends React.Component {
             .attr('y', 0)
             .attr('width', 10)
             .attr('height', 10);
+        const circlePattern = defs.append('pattern')
+            .attr('id', 'circle-pattern')
+            .attr('patternUnits', 'userSpaceOnUse')
+            .attr('width', 15)
+            .attr('height', 15)
+            .attr('fill', 'white');
+        circlePattern.append('rect')
+            .attr('width', 15)
+            .attr('height', 15)
+            .attr('fill', 'white')
+        circlePattern.append('circle')
+            .attr('cx', 7.5)
+            .attr('cy', 7.5)
+            .attr('r', 4)
+            .attr('stroke', 'none')
+            .attr('fill', 'rgba(165,42,42,1)')
         const outerCircle = this.drawnElems.outerCircle = svg.append('circle')
             .attr('class', 'outer')
             .attr('cx', width/2)
@@ -231,11 +259,11 @@ class VizComponent extends React.Component {
             .attr('class', 'label')
             .attr('x', width/2)
             .attr('y', height/2)
-            .attr('font-size', 28)
+            .attr('font-size', 36)
             .attr('font-family', 'Verdana')
             .attr('text-anchor', 'middle')
             .attr('fill', 'rgba(0,0,0,0)')
-            .text('10 square meters')
+            .text('10 km²')
 
         square.transition().ease(d3.easeLinear).duration(1000)
             .attr('width', width - (width * .2))
@@ -262,9 +290,11 @@ class VizComponent extends React.Component {
         graze.transition(t).delay(9000).duration(800)
             .attr('fill', 'green')
             .attr('stroke', 'rgba(0,0,0,1)')
-        buildings.transition(t).delay(11000).duration(800)
+        buildings.transition(t).delay(11000) // these don't transition
             .attr('fill', 'url(#diagonal-stripe-2)')
             .attr('stroke', 'rgba(0,0,0,1)')
+        innerCircle.transition(t).delay(15000)
+            .attr('fill', 'url(#circle-pattern)')
     }
 
     removeSiteAnalysis(cb) {
