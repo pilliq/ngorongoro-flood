@@ -457,13 +457,32 @@ var VizComponent = function (_React$Component) {
         value: function siteAnalysis() {
             var svg = this.svg;
             this.drawnElems = {};
-            var pattern = this.svg.append('defs').append('pattern').attr('id', 'diagonal-stripe-2').attr('patternUnits', 'userSpaceOnUse').attr('width', 10).attr('height', 10).append('image').attr('xlink:href', 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxMCcgaGVpZ2h0PScxMCc+CiAgPHJlY3Qgd2lkdGg9JzEwJyBoZWlnaHQ9JzEwJyBmaWxsPSd3aGl0ZScvPgogIDxwYXRoIGQ9J00tMSwxIGwyLC0yCiAgICAgICAgICAgTTAsMTAgbDEwLC0xMAogICAgICAgICAgIE05LDExIGwyLC0yJyBzdHJva2U9J2JsYWNrJyBzdHJva2Utd2lkdGg9JzInLz4KPC9zdmc+').attr('x', 0).attr('y', 0).attr('width', 10).attr('height', 10);
+            var getX = function getX(i) {
+                return i % 10 * 17;
+            };
+            var getY = function getY(i) {
+                return i % 15 * 17;
+            };
+            React.createElement(
+                'defs',
+                null,
+                React.createElement(
+                    'pattern',
+                    { id: 'pattern', x: '0', y: '0', width: '20', height: '20', patternUnits: 'userSpaceOnUse' },
+                    React.createElement('circle', { cx: '10', cy: '10', r: '10', stroke: 'none', fill: '#393' })
+                )
+            );
+            var defs = this.svg.append('defs');
+            var diagonalPattern = defs.append('pattern').attr('id', 'diagonal-stripe-2').attr('patternUnits', 'userSpaceOnUse').attr('width', 10).attr('height', 10).append('image').attr('xlink:href', 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxMCcgaGVpZ2h0PScxMCc+CiAgPHJlY3Qgd2lkdGg9JzEwJyBoZWlnaHQ9JzEwJyBmaWxsPSd3aGl0ZScvPgogIDxwYXRoIGQ9J00tMSwxIGwyLC0yCiAgICAgICAgICAgTTAsMTAgbDEwLC0xMAogICAgICAgICAgIE05LDExIGwyLC0yJyBzdHJva2U9J2JsYWNrJyBzdHJva2Utd2lkdGg9JzInLz4KPC9zdmc+').attr('x', 0).attr('y', 0).attr('width', 10).attr('height', 10);
+            var circlePattern = defs.append('pattern').attr('id', 'circle-pattern').attr('patternUnits', 'userSpaceOnUse').attr('width', 15).attr('height', 15).attr('fill', 'white');
+            circlePattern.append('rect').attr('width', 15).attr('height', 15).attr('fill', 'white');
+            circlePattern.append('circle').attr('cx', 7.5).attr('cy', 7.5).attr('r', 4).attr('stroke', 'none').attr('fill', 'rgba(165,42,42,1)');
             var outerCircle = this.drawnElems.outerCircle = svg.append('circle').attr('class', 'outer').attr('cx', width / 2).attr('cy', height / 2).attr('r', (height - height * .2) / 2).attr('fill', 'rgba(0,0,0,0)').attr('stroke', 'rgba(0,0,0,0)');
             var innerCircle = this.drawnElems.innerCircle = svg.append('circle').attr('class', 'inner').attr('cx', width / 2).attr('cy', height / 2).attr('r', (height - height * .3) / 2).attr('fill', 'rgba(255,255,255,1)').attr('stroke', 'rgba(0,0,0,0)');
             var buildings = this.drawnElems.buildings = svg.append('circle').attr('class', 'buildings').attr('cx', width / 2).attr('cy', height / 2).attr('r', height * .3 / 2).attr('fill', 'rgba(255,255,255,0)').attr('stroke', 'rgba(0,0,0,0)');
             var graze = this.drawnElems.graze = svg.append('circle').attr('class', 'graze').attr('cx', width / 2).attr('cy', height / 2).attr('r', height * .2 / 2).attr('fill', 'rgba(255,255,255,0)').attr('stroke', 'rgba(0,0,0,0)');
             var square = this.drawnElems.square = svg.append('rect').attr('class', 'square').attr('width', 0).attr('height', 10).attr('x', width * .1).attr('y', height * .1).attr('fill', 'rgba(255,255,255,0)').attr('stroke', 'rgba(0,0,0,1)').attr('stroke-width', '1px').attr('stroke-dasharray', '3,3');
-            var label = this.drawnElems.label = svg.append('text').attr('class', 'label').attr('x', width / 2).attr('y', height / 2).attr('font-size', 28).attr('font-family', 'Verdana').attr('text-anchor', 'middle').attr('fill', 'rgba(0,0,0,0)').text('10 square meters');
+            var label = this.drawnElems.label = svg.append('text').attr('class', 'label').attr('x', width / 2).attr('y', height / 2).attr('font-size', 36).attr('font-family', 'Verdana').attr('text-anchor', 'middle').attr('fill', 'rgba(0,0,0,0)').text('10 km²');
 
             square.transition().ease(d3.easeLinear).duration(1000).attr('width', width - width * .2).transition().ease(d3.easeLinear).duration(1000).attr('height', height - height * .2);
             label.transition().ease(d3.easeLinear).delay(2000).duration(800).attr('fill', 'rgba(0,0,0,1)');
@@ -475,7 +494,9 @@ var VizComponent = function (_React$Component) {
             innerCircle.transition(t).delay(6000).duration(800).attr('stroke', 'rgba(0,0,0,1)');
             outerCircle.transition(t).delay(8000).duration(800).attr('fill', 'green');
             graze.transition(t).delay(9000).duration(800).attr('fill', 'green').attr('stroke', 'rgba(0,0,0,1)');
-            buildings.transition(t).delay(11000).duration(800).attr('fill', 'url(#diagonal-stripe-2)').attr('stroke', 'rgba(0,0,0,1)');
+            buildings.transition(t).delay(11000) // these don't transition
+            .attr('fill', 'url(#diagonal-stripe-2)').attr('stroke', 'rgba(0,0,0,1)');
+            innerCircle.transition(t).delay(15000).attr('fill', 'url(#circle-pattern)');
         }
     }, {
         key: 'removeSiteAnalysis',
